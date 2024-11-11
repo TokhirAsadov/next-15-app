@@ -1,0 +1,2 @@
+import {defineQuery} from "groq";
+
