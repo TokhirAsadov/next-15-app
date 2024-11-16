@@ -16,10 +16,19 @@ export const experimental_ppr = true;
 const Page = async ({ params } : { params: Promise<{ id: string }> }) => {
     const id = (await params).id;
 
-    const post = await client.fetch(STARTUP_BY_ID_QUERY, { id });
+    // parallel rendering
+    const [post, { select: editorPosts } ] = await Promise.all([
+        client.fetch(STARTUP_BY_ID_QUERY, { id }),
+        client.fetch(PLAYLIST_BY_SLUG_QUERY, {
+            slug: 'java-basic-knowledge',
+        })
+    ])
 
-    const { select: editorPosts } = await client
-        .fetch(PLAYLIST_BY_SLUG_QUERY, { slug: 'java-basic-knowledge' });
+    // const post = await client.fetch(STARTUP_BY_ID_QUERY, { id });
+    //
+    // const { select: editorPosts } = await client.fetch(PLAYLIST_BY_SLUG_QUERY, {
+    //     slug: 'java-basic-knowledge'
+    // });
 
     if(!post) return notFound();
 
